@@ -1,0 +1,27 @@
+## Interface: 120005
+## Title: Yapper Plugin: Tongues
+## Notes: Recreates the Tongues addon for Yapper.
+## Version: 0.1.0
+## Author: Sara Schulze Øverby
+## IconTexture: 6624474
+## Category: Chat
+## Category-deDE: Chat
+## Category-esES: Chat
+## Category-esMX: Chat
+## Category-frFR: Discussion
+## Category-itIT: Chat
+## Category-koKR: 대화
+## Category-ptBR: Bate-papo
+## Category-ruRU: Чат
+## Category-zhCN: 聊天
+## Category-zhTW: 對話
+## SavedVariables: YapperTonguesGlobal
+## SavedVariablesPerCharacter: YapperTonguesLocal
+## LoadSavedVariablesFirst: 1
+## RequiredDeps: Yapper
+
+# Always loads first
+Src\Core.lua
+
+# Load this last.
+YapperTongues.lua
