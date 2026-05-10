@@ -1,14 +1,5 @@
 local name, Tongues = ...
 
--- First we check Yapper's API. If it's not available then this whole addon is moot.
-if Tongues.Core:CheckAPI() then
-    Tongues.Core.Config.Enabled = true
-end
-
-if not Tongues.Core.Config.Enabled then
-    return
-end
-
 -- It should be here anyway because Yapper is a required dep.
 -- If we get here, then we're all good. Initialise the addon.
 local loginListener = nil
@@ -23,6 +14,14 @@ local function DoInit(self, event, ...)
         -- We initialised. Unregister and kill the frame.
         loginListener:UnregisterAllEvents()
         loginListener = nil
+
+        -- then verify API
+        if Tongues.Core:CheckAPI() then
+            Tongues.Core.Config.Enabled = true
+        end
+        if not Tongues.Core.Config.Enabled then
+            return
+        end
     end
 end
 

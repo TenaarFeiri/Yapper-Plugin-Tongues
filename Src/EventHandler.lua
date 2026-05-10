@@ -20,7 +20,7 @@ local function OnPreSend(payload)
     -- Process text before it's sent.
     -- TODO: Implement
     local text = payload.text
-    print("Yapper tongues received: " .. text)
+    --print("Yapper tongues received: " .. text)
     return payload
 end
 
@@ -38,7 +38,6 @@ end
 local function RegisterAllFilters()
     -- Register all the filters we need and store the handles in their appropriate table entries.
     Filters.PRE_SEND = API:RegisterFilter("PRE_SEND", OnPreSend)
-
     -- Validate that no filter returned nil.
     local tbl = {}
     for k, v in pairs(Filters) do
