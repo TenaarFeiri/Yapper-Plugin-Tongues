@@ -22,6 +22,11 @@
 
 # Always loads first
 Src\Core.lua
+Src\Utils.lua
+
+# Order here does not matter.
+Src\EventHandler.lua
+Src\UI.lua
 
 # Load this last.
 YapperTongues.lua
