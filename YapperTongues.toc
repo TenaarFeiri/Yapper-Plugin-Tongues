@@ -20,13 +20,14 @@
 ## LoadSavedVariablesFirst: 1
 ## RequiredDeps: Yapper
 
-# Always loads first
+# Always loads first, in this order
 Src\Core.lua
-Src\Utils.lua
+Src\Utils\TableUtils.lua
+Src\Utils\LanguageParser.lua
 
 # Order here does not matter.
 Src\EventHandler.lua
-#Src\UI.lua
+Src\UI\UI.lua
 
 # Load this last.
 YapperTongues.lua

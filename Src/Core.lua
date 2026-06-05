@@ -1,4 +1,5 @@
 local name, Tongues = ...
+YapperTonguesGlobal = YapperTonguesGlobal or {}
 
 local Defaults = {
     Config = { -- This is saved globally.
@@ -26,85 +27,78 @@ local Defaults = {
 
 local Core = {
     API = nil,
-    CharacterSettings = nil -- Backfilled by TonguesResolveDefaults
+    CharacterSettings = nil, -- Backfilled by TonguesResolveDefaults
+    Utils = {}, -- Hold utils functions
+    EventHandler = {}, -- Hold EventHandler's functions
 }
-Tongues.Core = Core
-local API = nil
 
---- Initialises config db if not present,
---- and backfills defaults if necessary.
-local function TonguesResolveDefaults()
-    local tbl = {}
-    tbl.Config = {} -- Empty table first.
-    
-    -- Do we have a global table?
-    if not YapperTonguesGlobal or type(YapperTonguesGlobal) ~= "table" then
-        -- If not, initialise.
-        YapperTonguesGlobal = {}
-    end
-    
-    -- Does it have a config? If not, init.
-    if not YapperTonguesGlobal.Config or type(YapperTonguesGlobal.Config) ~= "table" then
-        YapperTonguesGlobal.Config = {}
-    end
+function Core:ResolveDefaults()
+   -- First do a loop to see if something should be removed.
+   if self.Settings == Defaults then
+      return -- Nothing needs updating.
+   end
 
-    for key, value in pairs(Defaults.Config) do
-        if YapperTonguesGlobal.Config[key] ~= nil then
-            -- If the setting exists in saved config, use that.
-            tbl.Config[key] = YapperTonguesGlobal.Config[key]
-        else
-            -- Otherwise, we use the default.
-            tbl.Config[key] = Defaults.Config[key]
+   local outputTable = {}
+
+   -- Build outputTable from Defaults to ensure only current defaults exist
+   for k, v in pairs(Defaults) do
+    -- Check if value is a table
+    local isTable = type(v) == "table"
+    if isTable then
+        -- Recursively build table from Defaults
+        outputTable[k] = {}
+        for k2, v2 in pairs(v) do
+            outputTable[k][k2] = v2
         end
+    else
+        -- If it's not a table, just copy the value
+        outputTable[k] = v
     end
+   end
 
-    -- Then let's wipe the global savefile.
-    YapperTonguesGlobal.Config = tbl.Config
-    
-    -- And, finally...
-    Core.Config = YapperTonguesGlobal.Config
+   -- Overwrite Settings with outputTable to remove old settings
+   YapperTonguesGlobal.Settings = outputTable
+   self.Settings = outputTable
+end
 
-    -- Next we're gonna resolve the local variables.
-    if not YapperTonguesLocal or type(YapperTonguesLocal) ~= "table" then
-        -- If this does not exist, initialise it. We will backfill it the same way we did globals.
-        YapperTonguesLocal = {}
-    end
-
-    -- Then set YTL in core.
-    -- We'll backfill new settings there later
-    Core.CharacterSettings = YapperTonguesLocal
+function Core:Initialise()
+    -- Resolve defaults to clean up old settings
+    self:ResolveDefaults()
+    -- Ensure Config is properly set
+    Core.Config = self.Settings.Config or Defaults.Config
+    return true
 end
 
 function Core:CheckAPI()
-    if not _G.YapperAPI then
-        return false
-    end
-    Tongues.Core.API = _G.YapperAPI
-    -- Just for pedantry to verify that it got added
-    if Tongues.Core.API ~= _G.YapperAPI then
+    local api = _G.YapperAPI
+    if not api then
         return false
     end
     return true
 end
 
---- Set up the Tongues plugin, including all of its UIs, defaults,
---- backfill new settings, and so on.
-function Core:Initialise()
-    -- Before all else, Utils must exist or we die.
-    if not Tongues.Utils or type(Tongues.Utils) ~= "table" then
-        return false
-    end
-    -- Check if settings exist then resolve them, potentially with defaults.
-    TonguesResolveDefaults()
+Tongues.Core = Core
+local API = nil
 
-    if not self:CheckAPI() then
-        error("Could not load Yapper's API. Does it not exist?")
-        return false
-    end
-    API = Tongues.Core.API -- localise for speed
-
-    -- remaining setup code below here
-    Tongues.Events:Setup() -- Register our events and filters.
-
-    return true
+-- Load UI module and register settings category
+local UI = Tongues.UI
+if UI and UI.Create then
+    UI:Create()
 end
+
+local Settings = YapperTonguesGlobal.Settings or {}
+
+-- Ensure Config always exists by merging missing defaults
+if not Settings.Config then
+    Settings.Config = {}
+end
+
+-- Merge missing config defaults
+for k, v in pairs(Defaults.Config) do
+    if Settings.Config[k] == nil then
+        Settings.Config[k] = v
+    end
+end
+
+Core.Settings = Settings
+Core.Config = Settings.Config

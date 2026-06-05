@@ -1,5 +1,5 @@
 local name, Tongues = ...
-
+YapperTonguesGlobal = YapperTonguesGlobal or {}
 -- It should be here anyway because Yapper is a required dep.
 -- If we get here, then we're all good. Initialise the addon.
 local loginListener = nil
@@ -22,6 +22,9 @@ local function DoInit(self, event, ...)
         if not Tongues.Core.Config.Enabled then
             return
         end
+
+        -- Then create UI.
+        Tongues.UI:Create()
     end
 end
 
