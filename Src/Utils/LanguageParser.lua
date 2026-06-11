@@ -1,5 +1,5 @@
 local name, Tongues = ...
-local Utils = Tongues.Utils or nil
+local Utils = Tongues.Core.Utils or nil
 
 if not Utils then
     -- This probably loaded before Core.lua, in which case if this happens fix your fucking shit

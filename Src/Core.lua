@@ -28,7 +28,9 @@ local Defaults = {
 local Core = {
     API = nil,
     CharacterSettings = nil, -- Backfilled by TonguesResolveDefaults
-    Utils = {}, -- Hold utils functions
+    Utils = {
+        exists = true, -- There has to be something here otherwise we get errors.
+    }, -- Hold utils functions
     EventHandler = {}, -- Hold EventHandler's functions
 }
 
